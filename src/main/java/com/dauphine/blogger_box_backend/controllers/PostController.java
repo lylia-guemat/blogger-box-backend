@@ -19,17 +19,20 @@ public class PostController {
     }
 
     @GetMapping("/category/{catId}")
-    public List<Post> retrieveAllByCategoryId(@PathVariable UUID catId){
+    public List<Post> getAllByCategoryId(@PathVariable UUID catId){
         return service.getAllByCategoryId(catId);
     }
 
     @GetMapping
-    public List<Post> retrieveAll(){
-        return service.getAll();
+    public List<Post> getAll(@RequestParam(required = false) String value){
+        List<Post> posts = value == null || value.isBlank()
+                ?service.getAll()
+                :service.getAllByTitleOrContent(value) ;
+        return posts;
     }
 
     @GetMapping("{id}")
-    public Post retrieveById(@PathVariable UUID id){
+    public Post getById(@PathVariable UUID id){
         return service.getById(id);
     }
 

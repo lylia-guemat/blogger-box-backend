@@ -19,4 +19,6 @@ public interface PostService {
 
     boolean deleteById(UUID id);
 
+    List<Post> getAllByTitleOrContent(String value);
+
 }

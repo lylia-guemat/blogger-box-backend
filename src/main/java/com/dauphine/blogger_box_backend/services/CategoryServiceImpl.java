@@ -2,6 +2,7 @@ package com.dauphine.blogger_box_backend.services;
 
 import com.dauphine.blogger_box_backend.models.Category;
 import com.dauphine.blogger_box_backend.repositories.CategoryRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,5 +48,11 @@ public class CategoryServiceImpl implements CategoryService {
         repository.deleteById(id);
         return true ;
     }
+
+    @Override
+    public List<Category> getAllLikeName(String name){
+        return repository.findAllLikeName(name);
+    }
+
 
 }
