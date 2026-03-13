@@ -1,6 +1,8 @@
 package com.dauphine.blogger_box_backend.controllers;
 
 import com.dauphine.blogger_box_backend.dto.PostRequest;
+import com.dauphine.blogger_box_backend.exceptions.CategoryNotFoundByIdException;
+import com.dauphine.blogger_box_backend.exceptions.PostNotFoundByIdException;
 import com.dauphine.blogger_box_backend.models.Post;
 import com.dauphine.blogger_box_backend.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,11 +46,12 @@ public class PostController {
             description = "Retrieve a post by id"
     )
     public ResponseEntity<Post> getById(@PathVariable UUID id){
-        Post post = service.getById(id);
-        if (post == null){
+        try {
+            Post post = service.getById(id);
+            return ResponseEntity.ok(post);
+        } catch (PostNotFoundByIdException e){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(post);
     }
 
     @PostMapping
@@ -57,10 +60,14 @@ public class PostController {
             description = "Create new post, required fields : title, content and a category"
     )
     public ResponseEntity<Post> create(@RequestBody PostRequest postRequest) {
-        Post post = service.create(postRequest.getTitle(), postRequest.getContent(), postRequest.getCategoryId());
-        return ResponseEntity
-                .created(URI.create("v1/posts/" + post.getId()))
-                .body(post);
+        try {
+            Post post = service.create(postRequest.getTitle(), postRequest.getContent(), postRequest.getCategoryId());
+            return ResponseEntity
+                    .created(URI.create("v1/posts/" + post.getId()))
+                    .body(post);
+        } catch (CategoryNotFoundByIdException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("{id}")
@@ -69,11 +76,13 @@ public class PostController {
             description = "Update new post, only the title, content and category can be updated"
     )
     public ResponseEntity<Post> update(@PathVariable UUID id, @RequestBody PostRequest postRequest) {
-        Post post = service.update(id, postRequest.getTitle(), postRequest.getContent(), postRequest.getCategoryId());
-        if (post == null){
+        try {
+            Post post = service.update(id, postRequest.getTitle(), postRequest.getContent(), postRequest.getCategoryId());
+            return ResponseEntity.ok(post);
+        }catch (Exception e){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(post);
+
     }
 
     @DeleteMapping("{id}")

@@ -1,6 +1,7 @@
 package com.dauphine.blogger_box_backend.controllers;
 
 import com.dauphine.blogger_box_backend.dto.CategoryRequest;
+import com.dauphine.blogger_box_backend.exceptions.CategoryNotFoundByIdException;
 import com.dauphine.blogger_box_backend.models.Category;
 import com.dauphine.blogger_box_backend.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,11 +40,13 @@ public class CategoryController {
             description = "Retrieve a category by id"
     )
     public ResponseEntity<Category> getById(@PathVariable UUID id) {
-        Category category =  service.getById(id);
-        if(category == null){
+        try {
+            Category category = service.getById(id);
+            return ResponseEntity.ok(category);
+        } catch (CategoryNotFoundByIdException e){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(category);
+
     }
 
     @PostMapping
@@ -64,11 +67,13 @@ public class CategoryController {
             description = "Update new category, only the name can be updated"
     )
     public ResponseEntity<Category> update(@PathVariable UUID id, @RequestBody CategoryRequest categoryRequest){
-        Category category = service.update(id, categoryRequest.getName());
-        if (category == null){
+        try {
+            Category category = service.update(id, categoryRequest.getName());
+            return ResponseEntity.ok(category);
+        }
+        catch (CategoryNotFoundByIdException e){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(category);
     }
 
     @DeleteMapping("{id}")
