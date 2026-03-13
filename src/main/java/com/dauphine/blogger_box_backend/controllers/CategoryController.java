@@ -39,14 +39,9 @@ public class CategoryController {
             summary = "Get category by id",
             description = "Retrieve a category by id"
     )
-    public ResponseEntity<Category> getById(@PathVariable UUID id) {
-        try {
+    public ResponseEntity<Category> getById(@PathVariable UUID id) throws CategoryNotFoundByIdException{
             Category category = service.getById(id);
             return ResponseEntity.ok(category);
-        } catch (CategoryNotFoundByIdException e){
-            return ResponseEntity.notFound().build();
-        }
-
     }
 
     @PostMapping
@@ -66,14 +61,10 @@ public class CategoryController {
             summary = "Update an existing category",
             description = "Update new category, only the name can be updated"
     )
-    public ResponseEntity<Category> update(@PathVariable UUID id, @RequestBody CategoryRequest categoryRequest){
-        try {
-            Category category = service.update(id, categoryRequest.getName());
-            return ResponseEntity.ok(category);
-        }
-        catch (CategoryNotFoundByIdException e){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Category> update(@PathVariable UUID id, @RequestBody CategoryRequest categoryRequest) throws CategoryNotFoundByIdException{
+        Category category = service.update(id, categoryRequest.getName());
+        return ResponseEntity.ok(category);
+
     }
 
     @DeleteMapping("{id}")

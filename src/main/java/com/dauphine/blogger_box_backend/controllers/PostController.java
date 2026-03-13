@@ -45,13 +45,9 @@ public class PostController {
             summary = "Get post by id",
             description = "Retrieve a post by id"
     )
-    public ResponseEntity<Post> getById(@PathVariable UUID id){
-        try {
-            Post post = service.getById(id);
-            return ResponseEntity.ok(post);
-        } catch (PostNotFoundByIdException e){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Post> getById(@PathVariable UUID id) throws PostNotFoundByIdException{
+        Post post = service.getById(id);
+        return ResponseEntity.ok(post);
     }
 
     @PostMapping
@@ -59,15 +55,11 @@ public class PostController {
             summary = "Create new post",
             description = "Create new post, required fields : title, content and a category"
     )
-    public ResponseEntity<Post> create(@RequestBody PostRequest postRequest) {
-        try {
-            Post post = service.create(postRequest.getTitle(), postRequest.getContent(), postRequest.getCategoryId());
-            return ResponseEntity
-                    .created(URI.create("v1/posts/" + post.getId()))
-                    .body(post);
-        } catch (CategoryNotFoundByIdException e){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Post> create(@RequestBody PostRequest postRequest) throws CategoryNotFoundByIdException {
+        Post post = service.create(postRequest.getTitle(), postRequest.getContent(), postRequest.getCategoryId());
+        return ResponseEntity
+                .created(URI.create("v1/posts/" + post.getId()))
+                .body(post);
     }
 
     @PutMapping("{id}")
@@ -75,14 +67,9 @@ public class PostController {
             summary = "Update an existing post",
             description = "Update new post, only the title, content and category can be updated"
     )
-    public ResponseEntity<Post> update(@PathVariable UUID id, @RequestBody PostRequest postRequest) {
-        try {
-            Post post = service.update(id, postRequest.getTitle(), postRequest.getContent(), postRequest.getCategoryId());
-            return ResponseEntity.ok(post);
-        }catch (Exception e){
-            return ResponseEntity.notFound().build();
-        }
-
+    public ResponseEntity<Post> update(@PathVariable UUID id, @RequestBody PostRequest postRequest) throws CategoryNotFoundByIdException, PostNotFoundByIdException {
+        Post post = service.update(id, postRequest.getTitle(), postRequest.getContent(), postRequest.getCategoryId());
+        return ResponseEntity.ok(post);
     }
 
     @DeleteMapping("{id}")
